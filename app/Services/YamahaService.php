@@ -19,10 +19,7 @@ class YamahaService
             $params['input'] = 'usb';
         }
         $url = $this->getBaseUrl() . $function . '?' . http_build_query($params);
-        echo $url;
         $result = Http::get($url);
-        //print_r($result->body());
-        //print_R("<hr>");
         return $result;
     }
 

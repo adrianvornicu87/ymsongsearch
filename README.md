@@ -1,66 +1,57 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+*Yamaha Song Search*
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This application was created for the users of Yamaha audio devices to help them search for songs on the USB stick. The Yamaha device itself does not have any search functionality, neither does the MusicCast app. The user could only play a song if he/she knew in which folder it was. And if you had nested folders it would also take some time to walk through them. This is where the Yamaha Song Search app comes in. In this repo it is written in PHP / Laravel and uses a mysql/mariadb database. 
+The specification for the Yamaha device API is found within this repo, in YXC_API_Spec_Basic.pdf
+This was just an exercise to practice Laravel and at the same time solve a problem that the author had.
 
-## About Laravel
+*How it works*
+The app scans the USB stick inserted into the Yamaha audio device and stores the songs in the database, for each song storing the steps needed to get to it. When you search for a song, the search is done in the database. When you want to play a song, requests are sent to the device to navigate to that song and play it.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+*Installation*
+git clone https://github.com/adrianvornicu87/ymsongsearch.git
+In .env set YAMAHA_DEVICE_IP to the IP of your device in your home network
+To start the app:
+If you only want to access the app from localhost in the browser or postman:
+php artisan serve
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+If you also want to access the app from a device other than the one it's running on:
+php artisan serve --host <IP of your computer in the home network>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+*Routes*
 
-## Learning Laravel
+GET /scan
+This starts the initial scan of the USB stick. It takes no parameters
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+GET /search/{searchString}
+This request performs the search and gives us the results like they are in the database in JSON format. Example for the search "eminem wi":
+[
+    {
+        "id":1610,
+        "created_at":"2024-07-22T05:57:44.000000Z",
+        "updated_at":"2024-07-22T05:57:44.000000Z",
+        "title":"Eminem-Without Me",
+        "path":"/The Eminem Show/Eminem-Without Me",
+        "directoryIndexes":"36 6 0",
+        "fileIndex":16
+    },
+    {
+		"id": 3431,
+		"created_at": "2024-07-22T05:58:10.000000Z",
+		"updated_at": "2024-07-22T05:58:10.000000Z",
+		"title": "01-eminem-cold_wind_blows",
+		"path": "/Eminem - Recovery/01-eminem-cold_wind_blows",
+		"directoryIndexes": "45 2",
+		"fileIndex": 0
+	}
+]
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+The search is done in the path column because it contains all the folders and the file name. 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+GET /play/{id}
+This request starts the actual playback of a song. It receives the ID of the song as the parameter. The playback is done by sending requests to the device to navigate between folders. As we can see from the Yamaha API specification PDF, we have to send requests to the device to navigate to the song and play it. For example if we access /play/1610 the app will instruct the audio device to do the following: 
+ - Go to folder with index 36
+ - Inside that folder go to folder with index 6
+ - Inside that folder go to folder with index 0
+ - Play file with index 16 
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

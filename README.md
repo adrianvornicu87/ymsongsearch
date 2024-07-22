@@ -8,14 +8,17 @@ This was just an exercise to practice Laravel and at the same time solve a probl
 The app scans the USB stick inserted into the Yamaha audio device and stores the songs in the database, for each song storing the steps needed to get to it. When you search for a song, the search is done in the database. When you want to play a song, requests are sent to the device to navigate to that song and play it.
 
 *Installation*
+
 git clone https://github.com/adrianvornicu87/ymsongsearch.git
+
 In .env set YAMAHA_DEVICE_IP to the IP of your device in your home network
-To start the app:
+
+*To start the app*
 If you only want to access the app from localhost in the browser or postman:
 php artisan serve
 
 If you also want to access the app from a device other than the one it's running on:
-php artisan serve --host <IP of your computer in the home network>
+php artisan serve --host _IP of your computer in the home network_
 
 *Routes*
 

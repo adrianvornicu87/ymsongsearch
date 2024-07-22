@@ -22,10 +22,12 @@ php artisan serve --host _IP of your computer in the home network_
 
 *Routes*
 
-GET /scan
+- GET /scan
+
 This starts the initial scan of the USB stick. It takes no parameters
 
-GET /search/{searchString}
+- GET /search/{searchString}
+
 This request performs the search and gives us the results like they are in the database in JSON format. Example for the search "eminem wi":
 [
     {
@@ -50,7 +52,8 @@ This request performs the search and gives us the results like they are in the d
 
 The search is done in the path column because it contains all the folders and the file name. 
 
-GET /play/{id}
+ - GET /play/{id}
+ 
 This request starts the actual playback of a song. It receives the ID of the song as the parameter. The playback is done by sending requests to the device to navigate between folders. As we can see from the Yamaha API specification PDF, we have to send requests to the device to navigate to the song and play it. For example if we access /play/1610 the app will instruct the audio device to do the following: 
  - Go to folder with index 36
  - Inside that folder go to folder with index 6

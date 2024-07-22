@@ -11,7 +11,7 @@ The app scans the USB stick inserted into the Yamaha audio device and stores the
 
 git clone https://github.com/adrianvornicu87/ymsongsearch.git
 
-In .env set YAMAHA_DEVICE_IP to the IP of your device in your home network
+In .env set YAMAHA_DEVICE_IP to the IP of your audio device in your home network
 
 *To start the app*
 If you only want to access the app from localhost in the browser or postman:
